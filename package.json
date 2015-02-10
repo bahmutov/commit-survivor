@@ -1,0 +1,25 @@
+{
+  "name": "survivor-commit",
+  "version": "0.0.1",
+  "description": "How much of this commit has survived?",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "commit",
+    "git",
+    "source",
+    "remaining"
+  ],
+  "author": "Gleb Bahmutov <gleb.bahmutov@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "chdir-promise": "0.2.1",
+    "check-more-types": "1.3.0",
+    "check-types": "1.4.0",
+    "ggit": "0.7.0",
+    "lazy-ass": "0.5.3",
+    "ramda": "0.9.1"
+  }
+}
