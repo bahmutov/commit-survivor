@@ -1,5 +1,5 @@
 {
-  "name": "survivor-commit",
+  "name": "commit-survivor",
   "version": "0.0.1",
   "description": "How much of this commit has survived?",
   "main": "index.js",
@@ -10,7 +10,9 @@
     "commit",
     "git",
     "source",
-    "remaining"
+    "remaining",
+    "survive",
+    "survivor"
   ],
   "author": "Gleb Bahmutov <gleb.bahmutov@gmail.com>",
   "license": "MIT",
