@@ -17,9 +17,11 @@
   "author": "Gleb Bahmutov <gleb.bahmutov@gmail.com>",
   "license": "MIT",
   "dependencies": {
+    "bad-line": "0.1.0",
     "chdir-promise": "0.2.1",
     "check-more-types": "1.3.0",
     "check-types": "1.4.0",
+    "cute-stack": "1.2.1",
     "ggit": "0.7.0",
     "lazy-ass": "0.5.3",
     "ramda": "0.9.1"
