@@ -2,6 +2,8 @@ require('cute-stack')(require('bad-line'));
 
 require('lazy-ass');
 var check = require('check-more-types');
+var d3h = require('d3-helpers');
+var folders = require('chdir-promise');
 
 var ggit = require('ggit');
 require('console.table');
@@ -14,9 +16,33 @@ function printCommitsList(list) {
   console.log(list.length + ' commit(s)');
 }
 
-ggit.commits.all(repoFolder)
-  .then(printCommitsList)
-  .done();
+function commits(repoFolder) {
+  la(check.unemptyString(repoFolder));
+  return ggit.commits.all(repoFolder)
+    .tap(printCommitsList)
+}
+
+// commits(repoFolder).done();
+
+function findTrackedFiles(folder) {
+  console.log('finding source files in folder', folder);
+  return ggit.trackedFiles(folder, '*.js');
+}
+
+function sourceFiles(repoFolder, fileFilter) {
+  la(check.unemptyString(repoFolder));
+
+  var findFiles = findTrackedFiles.bind(null, repoFolder);
+
+  return folders.to(repoFolder)
+    .then(findFiles)
+    .tap(function (files) {
+      console.log('files in folder', files);
+    })
+    .tap(folders.back);
+}
+
+sourceFiles(repoFolder).done();
 
 // look at the git blame for files at head
 // then look at each commit
