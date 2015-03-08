@@ -56,6 +56,23 @@ function blameToSurvivedCommit(blame) {
     var commitIds = R.uniq(R.map(R.prop('commit'), blame[filename]));
     var survivedCommits =  removeUncommittedId(commitIds);
     console.log('for file', quote(filename), 'survived commits', survivedCommits);
+
+    // init survive line counters per file
+    survivors[filename] = {};
+    survivedCommits.forEach(function (id) {
+      survivors[filename][id] = {
+        survived: 0
+      };
+    });
+
+    // count number of lines per commit still in the file
+    blame[filename].forEach(function (lineBlame) {
+      la(check.unemptyString(lineBlame.commit), 'missing commit', lineBlame);
+      if (survivors[filename][lineBlame.commit]) {
+        la(check.number(survivors[filename][lineBlame.commit].survived));
+        survivors[filename][lineBlame.commit].survived += 1;
+      }
+    });
   });
   return survivors;
 }
@@ -64,6 +81,7 @@ sourceFiles(repoFolder, '*.js')
   .then(ggit.commitPerLine)
   // .tap(console.log)
   .then(blameToSurvivedCommit)
+  .tap(console.log)
   .done();
 
 // look at the git blame for files at head
