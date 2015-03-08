@@ -41,9 +41,29 @@ function sourceFiles(repoFolder, fileFilter) {
     .tap(folders.back);
 }
 
+function removeUncommittedId(ids) {
+  la(check.arrayOfStrings(ids), 'expected list of ids', ids);
+  // modified lines that were not committed yet will get id 0
+  return R.reject(R.match(/^0+$/), ids);
+}
+
+// count number of survived lines per file for each commit
+function blameToSurvivedCommit(blame) {
+  la(check.object(blame), 'expected blame objects');
+  var survivors = {};
+  Object.keys(blame).forEach(function (filename) {
+    la(check.array(blame[filename]), 'expected list of blame per line for', filename);
+    var commitIds = R.uniq(R.map(R.prop('commit'), blame[filename]));
+    var survivedCommits =  removeUncommittedId(commitIds);
+    console.log('for file', quote(filename), 'survived commits', survivedCommits);
+  });
+  return survivors;
+}
+
 sourceFiles(repoFolder, '*.js')
   .then(ggit.commitPerLine)
-  .tap(console.log)
+  // .tap(console.log)
+  .then(blameToSurvivedCommit)
   .done();
 
 // look at the git blame for files at head
