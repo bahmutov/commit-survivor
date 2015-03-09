@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "description": "How much of this commit has survived?",
   "main": "index.js",
+  "bin": "bin/commit-survivor.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -25,9 +26,22 @@
     "d3-helpers": "0.3.0",
     "ggit": "0.10.0",
     "lazy-ass": "0.5.3",
+    "minimatch": "2.0.1",
     "q": "1.2.0",
     "quote": "0.4.0",
     "ramda": "0.9.1",
-    "minimatch": "2.0.1"
+    "update-notifier": "0.3.1",
+    "yargs": "3.4.5"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bahmutov/commit-survivor.git"
+  },
+  "homepage": "https://github.com/bahmutov/commit-survivor",
+  "bugs": {
+    "url": "https://github.com/bahmutov/commit-survivor/issues"
+  },
+  "engines": {
+    "node": ">= 0.11.0"
   }
 }
