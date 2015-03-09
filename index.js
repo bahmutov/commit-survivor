@@ -12,10 +12,6 @@ var minimatch = require('minimatch');
 var ggit = require('ggit');
 require('console.table');
 
-// main parameters
-var repoFolder = __dirname;
-var fileMask = '*.js';
-
 function printCommitsList(list) {
   la(check.array(list), list);
   console.table(list);
@@ -83,7 +79,7 @@ function blameToSurvivedCommit(blame) {
 
 // compute survived lines for each file and each commit
 function survivedCommitLines(folder, filePattern) {
-  return sourceFiles(repoFolder, fileMask)
+  return sourceFiles(folder, filePattern)
     .then(ggit.commitPerLine)
     // .tap(console.log)
     .then(blameToSurvivedCommit);
@@ -124,7 +120,7 @@ survivedCommitLines(repoFolder, '*.js')
 
 function getCommits(folder) {
   la(check.unemptyString(folder), 'missing folder');
-  return ggit.commits.all(repoFolder)
+  return ggit.commits.all(folder)
     .then(ggit.commits.byId);
 }
 
@@ -205,31 +201,38 @@ function survivalRate(ids, history, survived) {
   return survivalStats;
 }
 
-var listOfCommits = getCommits(repoFolder);
-var survivingCommits = survivedCommitLines(repoFolder, fileMask);
+function survivor(repoFolder, fileMask) {
 
-Q.all([
-  listOfCommits, survivingCommits
-]).spread(function (commits, survived) {
-    // console.log(commits);
-    var ids = R.keys(commits);
-    var numstats = ids.map(getChangesPerCommit);
-    return Q.all(numstats).then(function (stats) {
-      return [ids, stats, survived];
-    });
-  })
-  .spread(function (ids, allCommitsStats, survived) {
-    // console.log('all commits stats');
-    // console.log(allCommitsStats);
-    var sourceFilesOnly = removeOtherFiles(fileMask, allCommitsStats);
-    // console.log('source files only');
-    // console.log(sourceFilesOnly);
-    return Q.all([ids, sourceFilesOnly, survived]);
-  })
-  .spread(survivalRate)
-  .done();
+  var listOfCommits = getCommits(repoFolder);
+  var survivingCommits = survivedCommitLines(repoFolder, fileMask);
 
-// look at the git blame for files at head
-// then look at each commit
-// and see how many files were modified in the commit K
-// compute survival rate for commit K
+  Q.all([
+    listOfCommits, survivingCommits
+  ]).spread(function (commits, survived) {
+      // console.log(commits);
+      var ids = R.keys(commits);
+      var numstats = ids.map(getChangesPerCommit);
+      return Q.all(numstats).then(function (stats) {
+        return [ids, stats, survived];
+      });
+    })
+    .spread(function (ids, allCommitsStats, survived) {
+      // console.log('all commits stats');
+      // console.log(allCommitsStats);
+      var sourceFilesOnly = removeOtherFiles(fileMask, allCommitsStats);
+      // console.log('source files only');
+      // console.log(sourceFilesOnly);
+      return Q.all([ids, sourceFilesOnly, survived]);
+    })
+    .spread(survivalRate)
+    .done();
+
+  // look at the git blame for files at head
+  // then look at each commit
+  // and see how many files were modified in the commit K
+  // compute survival rate for commit K
+}
+
+module.exports = check.defend(survivor,
+  check.unemptyString, 'Need git repo folder',
+  check.maybe.unemptyString, 'Missing file mask');
