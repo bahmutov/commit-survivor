@@ -2,6 +2,21 @@
 
 > How much of this commit has survived?
 
+[![NPM][commit-survivor-icon] ][commit-survivor-url]
+
+[![Build status][commit-survivor-ci-image] ][commit-survivor-ci-url]
+[![dependencies][commit-survivor-dependencies-image] ][commit-survivor-dependencies-url]
+[![devdependencies][commit-survivor-devdependencies-image] ][commit-survivor-devdependencies-url]
+
+[commit-survivor-icon]: https://nodei.co/npm/commit-survivor.png?downloads=true
+[commit-survivor-url]: https://npmjs.org/package/commit-survivor
+[commit-survivor-ci-image]: https://travis-ci.org/bahmutov/commit-survivor.png?branch=master
+[commit-survivor-ci-url]: https://travis-ci.org/bahmutov/commit-survivor
+[commit-survivor-dependencies-image]: https://david-dm.org/bahmutov/commit-survivor.png
+[commit-survivor-dependencies-url]: https://david-dm.org/bahmutov/commit-survivor
+[commit-survivor-devdependencies-image]: https://david-dm.org/bahmutov/commit-survivor/dev-status.png
+[commit-survivor-devdependencies-url]: https://david-dm.org/bahmutov/commit-survivor#info=devDependencies
+
 ### Small print
 
 Author: Gleb Bahmutov &copy; 2015
