@@ -12,6 +12,8 @@ var ggit = require('ggit');
 require('console.table');
 
 var sourceFiles = require('./source-files');
+var blameToSurvivedCommit = require('./blame-survivors');
+var survivalRate = require('./survival-rate');
 
 function printCommitsList(list) {
   la(check.array(list), list);
@@ -26,42 +28,6 @@ function commits(repoFolder) {
 }
 
 // commits(repoFolder).done();
-
-function removeUncommittedId(ids) {
-  la(check.arrayOfStrings(ids), 'expected list of ids', ids);
-  // modified lines that were not committed yet will get id 0
-  return R.reject(R.match(/^0+$/), ids);
-}
-
-// count number of survived lines per file for each commit
-function blameToSurvivedCommit(blame) {
-  la(check.object(blame), 'expected blame objects');
-  var survivors = {};
-  Object.keys(blame).forEach(function (filename) {
-    la(check.array(blame[filename]), 'expected list of blame per line for', filename);
-    var commitIds = R.uniq(R.map(R.prop('commit'), blame[filename]));
-    var survivedCommits =  removeUncommittedId(commitIds);
-    // console.log('for file', quote(filename), 'survived commits', survivedCommits);
-
-    // init survive line counters per file
-    survivors[filename] = {};
-    survivedCommits.forEach(function (id) {
-      survivors[filename][id] = {
-        survived: 0
-      };
-    });
-
-    // count number of lines per commit still in the file
-    blame[filename].forEach(function (lineBlame) {
-      la(check.unemptyString(lineBlame.commit), 'missing commit', lineBlame);
-      if (survivors[filename][lineBlame.commit]) {
-        la(check.number(survivors[filename][lineBlame.commit].survived));
-        survivors[filename][lineBlame.commit].survived += 1;
-      }
-    });
-  });
-  return survivors;
-}
 
 // compute survived lines for each file and each commit
 function survivedCommitLines(folder, filePattern) {
@@ -133,53 +99,6 @@ console.log(removeOtherFiles('*.js', [{
   'index.txt': { foo: 'bar' }
 }]));
 */
-
-var j = R.rPartial(JSON.stringify, null, 2);
-function survivalRate(ids, history, survived) {
-  la(check.arrayOfStrings(ids));
-  la(check.array(history));
-  la(ids.length === history.length);
-
-  console.log('computing survival rate');
-  console.log('--- ids\n' + j(ids));
-  console.log('--- history\n' + j(history));
-  console.log('--- survived\n' + j(survived));
-
-  var survivalRates = ids.map(function (id, k) {
-    if (check.empty(history[k])) {
-      console.log('commit', quote(id), 'is empty');
-      return;
-    }
-
-    var files = R.keys(history[k]);
-    console.log('looking at files', files);
-    var totalWrittenLines = 0;
-    var totalSurvivedLines = 0;
-
-    files.forEach(function (filename) {
-      var fileWrittenLines = history[k][filename].added;
-      la(check.number(fileWrittenLines), fileWrittenLines);
-      totalWrittenLines += fileWrittenLines;
-
-      if (survived[filename] && survived[filename][id]) {
-        var fileSurvivedLines = survived[filename][id].survived;
-        la(check.number(fileSurvivedLines), 'expected survived number', survived[filename][id]);
-        totalSurvivedLines += fileSurvivedLines;
-      }
-    });
-
-    console.log('commit', quote(id), 'written', totalWrittenLines, 'survived', totalSurvivedLines);
-    la(totalWrittenLines >= totalSurvivedLines, 'wrong written', totalWrittenLines,
-      'vs survived lines', totalSurvivedLines, 'for commit', id);
-    if (totalWrittenLines > 0) {
-      return totalSurvivedLines / totalWrittenLines;
-    }
-  });
-
-  var survivalStats = R.zipObj(ids, survivalRates);
-  console.log('--- survivalStats\n' + j(survivalStats));
-  return survivalStats;
-}
 
 function survivors(repoFolder, fileMask) {
 
