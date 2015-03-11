@@ -24,6 +24,7 @@
     "check-types": "1.4.0",
     "cute-stack": "1.2.1",
     "d3-helpers": "0.3.0",
+    "debug": "2.1.2",
     "ggit": "0.10.2",
     "lazy-ass": "0.5.3",
     "minimatch": "2.0.1",
