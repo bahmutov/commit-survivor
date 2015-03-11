@@ -11,6 +11,8 @@ var getCommits = require('./get-commits');
 var ggit = require('ggit');
 require('console.table');
 
+var sourceFiles = require('./source-files');
+
 function printCommitsList(list) {
   la(check.array(list), list);
   console.table(list);
@@ -24,21 +26,6 @@ function commits(repoFolder) {
 }
 
 // commits(repoFolder).done();
-
-function sourceFiles(repoFolder, fileFilter) {
-  la(check.unemptyString(repoFolder));
-
-  var findFiles = R.lPartial(ggit.trackedFiles, repoFolder, fileFilter);
-
-  function printFoundFiles(files) {
-    console.log('found', files.length, 'tracked source file(s)');
-  }
-
-  return folders.to(repoFolder)
-    .then(findFiles)
-    .tap(printFoundFiles)
-    .tap(folders.back);
-}
 
 function removeUncommittedId(ids) {
   la(check.arrayOfStrings(ids), 'expected list of ids', ids);
