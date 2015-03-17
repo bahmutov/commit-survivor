@@ -17,6 +17,8 @@
 [commit-survivor-devdependencies-image]: https://david-dm.org/bahmutov/commit-survivor/dev-status.png
 [commit-survivor-devdependencies-url]: https://david-dm.org/bahmutov/commit-survivor#info=devDependencies
 
+See [Developer value](http://glebbahmutov.com/blog/developer-value/)
+
 ### Small print
 
 Author: Gleb Bahmutov &copy; 2015
